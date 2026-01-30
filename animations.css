@@ -1,0 +1,398 @@
+/* ============================================
+   MODERN ANIMATIONS & EFFECTS
+   ============================================ */
+
+/* Keyframe Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Section Animations */
+.content-section {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.section-title {
+    animation: slideInLeft 0.8s ease-out;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--primary-color, #ff6b6b);
+    border-radius: 2px;
+    animation: slideInLeft 1s ease-out;
+}
+
+/* Card Animations */
+.promotion-card,
+.product-card,
+.event-card {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.promotion-card:nth-child(1) { animation-delay: 0.1s; }
+.promotion-card:nth-child(2) { animation-delay: 0.2s; }
+.promotion-card:nth-child(3) { animation-delay: 0.3s; }
+.promotion-card:nth-child(4) { animation-delay: 0.4s; }
+.promotion-card:nth-child(5) { animation-delay: 0.5s; }
+.promotion-card:nth-child(6) { animation-delay: 0.6s; }
+
+.product-card:nth-child(1) { animation-delay: 0.1s; }
+.product-card:nth-child(2) { animation-delay: 0.15s; }
+.product-card:nth-child(3) { animation-delay: 0.2s; }
+.product-card:nth-child(4) { animation-delay: 0.25s; }
+.product-card:nth-child(5) { animation-delay: 0.3s; }
+.product-card:nth-child(6) { animation-delay: 0.35s; }
+
+.event-card:nth-child(1) { animation-delay: 0.2s; }
+.event-card:nth-child(2) { animation-delay: 0.4s; }
+
+/* Hover Effects */
+.promotion-card:hover,
+.product-card:hover,
+.event-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+}
+
+.promotion-card:hover .promotion-image,
+.product-card:hover .product-image {
+    transform: scale(1.1);
+}
+
+/* Button Animations */
+.btn-apply,
+.btn-primary,
+.btn-contact {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-apply::before,
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-apply:hover::before,
+.btn-primary:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-apply:active,
+.btn-primary:active {
+    transform: scale(0.95);
+}
+
+/* Category Button Animations */
+.category-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.category-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: var(--primary-color, #ff6b6b);
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+.category-btn:hover::after,
+.category-btn.active::after {
+    width: 80%;
+}
+
+.category-btn:hover {
+    transform: translateY(-3px);
+}
+
+/* Image Animations */
+.promotion-image,
+.product-image,
+.event-media img {
+    transition: transform 0.4s ease;
+}
+
+/* Banner Animations */
+.banner-slide {
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* Problem Banner Styles */
+.problem-banner {
+    width: 100%;
+    min-height: 200px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    margin-bottom: 30px;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    animation: scaleIn 0.6s ease-out;
+    transition: all 0.4s ease;
+}
+
+.problem-banner:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+}
+
+.problem-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255,255,255,0.1),
+        transparent
+    );
+    animation: shimmer 3s infinite;
+}
+
+.problem-banner-content {
+    position: relative;
+    z-index: 1;
+    padding: 40px;
+    text-align: center;
+    color: white;
+}
+
+.problem-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.problem-banner-content h3 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.problem-banner-content p {
+    font-size: 18px;
+    opacity: 0.95;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.2);
+}
+
+/* Loading Animation */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading {
+    animation: spin 1s linear infinite;
+}
+
+/* Gradient Background Animation */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+    background-size: 200% 200%;
+    animation: gradientShift 15s ease infinite;
+}
+
+/* Section Navigation Animation */
+.section-btn {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.section-btn::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--primary-color, #ff6b6b);
+    transition: width 0.3s ease;
+}
+
+.section-btn.active::before {
+    width: 100%;
+}
+
+/* Modal Animation */
+.modal {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Ripple Effect */
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+    width: 20px;
+    height: 20px;
+    animation: ripple 0.6s ease-out;
+}
+
+/* Shake Animation for Errors */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.shake {
+    animation: shake 0.5s ease;
+}
+
+/* Glow Effect */
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 5px var(--primary-color, #ff6b6b),
+                    0 0 10px var(--primary-color, #ff6b6b);
+    }
+    50% {
+        box-shadow: 0 0 20px var(--primary-color, #ff6b6b),
+                    0 0 30px var(--primary-color, #ff6b6b);
+    }
+}
+
+.glow {
+    animation: glow 2s ease-in-out infinite;
+}
+
+/* Stagger Animation for Lists */
+.stagger-item {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0.1s; }
+.stagger-item:nth-child(2) { animation-delay: 0.2s; }
+.stagger-item:nth-child(3) { animation-delay: 0.3s; }
+.stagger-item:nth-child(4) { animation-delay: 0.4s; }
+.stagger-item:nth-child(5) { animation-delay: 0.5s; }
+
+/* Responsive Animations */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

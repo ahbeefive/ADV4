@@ -1,0 +1,24 @@
+{
+  "name": "admilk4-website",
+  "version": "4.0.0",
+  "description": "Mobile-responsive e-commerce website with admin panel",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "ecommerce",
+    "website",
+    "admin-panel",
+    "mobile-responsive",
+    "pwa"
+  ],
+  "author": "ADmilk4",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/your-repo-name.git"
+  },
+  "homepage": "https://yourusername.github.io/your-repo-name/"
+}

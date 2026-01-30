@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Content Management</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <!-- Auth Check Script -->
+    <script>
+        // Check authentication before loading page
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+        
+        // Check session expiry
+        const loginTime = sessionStorage.getItem('adminLoginTime');
+        if (loginTime) {
+            const hoursPassed = (Date.now() - loginTime) / (1000 * 60 * 60);
+            if (hoursPassed >= 8) {
+                sessionStorage.removeItem('adminLoggedIn');
+                sessionStorage.removeItem('adminLoginTime');
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+    
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>⚙️ Admin Panel</h2>
+            </div>
+            <nav class="admin-nav">
+                <button class="nav-item active" data-tab="products">
+                    📦 All Products
+                </button>
+                <button class="nav-item" data-tab="posts">
+                    📝 Posts
+                </button>
+                <button class="nav-item" data-tab="promotions">
+                    🎁 Promotions
+                </button>
+                <button class="nav-item" data-tab="banners">
+                    📸 Banners
+                </button>
+                <button class="nav-item" data-tab="events">
+                    📅 Events
+                </button>
+                <button class="nav-item" data-tab="categories">
+                    🏷️ Categories
+                </button>
+                <button class="nav-item" data-tab="sections">
+                    📋 Section Management
+                </button>
+                <button class="nav-item" data-tab="language">
+                    🌍 Language Settings
+                </button>
+                <button class="nav-item" data-tab="buttons">
+                    🔘 Button Customization
+                </button>
+                <button class="nav-item" data-tab="datasave">
+                    💾 Data Save
+                </button>
+                <button class="nav-item" data-tab="settings">
+                    ⚙️ Settings
+                </button>
+                <button class="nav-item" data-tab="view">
+                    🌐 View Website
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="admin-header">
+                <h1 id="pageTitle">Product Management</h1>
+                <div class="header-actions">
+                    <button class="btn-logout">Logout</button>
+                </div>
+            </header>
+
+            <!-- Products Tab -->
+            <div id="products" class="tab-content active">
+                <div class="content-header">
+                    <button class="btn-primary" onclick="addProduct()">+ Add Product</button>
+                    <div class="help-tip" style="margin-top: 15px;">
+                        <strong>💡 Tip:</strong> Upload images from PC or use URLs. You can also add product videos from YouTube, Facebook, TikTok, or Instagram!
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Name (EN)</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Posts Tab -->
+            <div id="posts" class="tab-content">
+                <div class="content-header">
+                    <button class="btn-primary" onclick="addPost()">+ Add Post</button>
+                    <div class="help-tip" style="margin-top: 15px;">
+                        <strong>💡 Tip:</strong> Create engaging posts with images and content. Posts will appear in the Post section of your website.
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Title (EN)</th>
+                                <th>Title (KM)</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Promotions Tab -->
+            <div id="promotions" class="tab-content">
+                <div class="content-header">
+                    <button class="btn-primary" onclick="addPromotion()">+ Add Promotion</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Title (EN)</th>
+                                <th>Title (KM)</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="promotionsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Banners Tab -->
+            <div id="banners" class="tab-content">
+                <div class="content-header">
+                    <button class="btn-primary" onclick="addBanner()">+ Add Banner</button>
+                    <div class="help-tip" style="margin-top: 15px;">
+                        <strong>💡 Banner System:</strong> Upload unlimited banner images with custom durations. <strong style="color: #28a745;">1GB+ IndexedDB storage - Full Quality!</strong><br>
+                        <strong>✨ No Compression:</strong> Your images are saved at full quality with no compression.<br>
+                        <strong>📊 Storage Info:</strong> Check browser console for detailed storage statistics.
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Banner</th>
+                                <th>Link</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bannersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Events Tab -->
+            <div id="events" class="tab-content">
+                <div class="content-header">
+                    <button class="btn-primary" onclick="addEvent()">+ Add Event</button>
+                    <div class="help-tip" style="margin-top: 15px;">
+                        <strong>💡 Tip:</strong> For video events, just paste the regular video URL from YouTube, Facebook, TikTok, or Instagram. The system will automatically convert it to the correct embed format!
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title (EN)</th>
+                                <th>Type</th>
+                                <th>Media</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eventsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Categories Tab -->
+            <div id="categories" class="tab-content">
+                <div class="content-header">
+                    <button class="btn-primary" onclick="addCategory()">+ Add Category</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name (EN)</th>
+                                <th>Name (KM)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Section Management Tab -->
+            <div id="sections" class="tab-content">
+                <div class="content-header">
+                    <button class="btn-primary" onclick="addCustomSection()">+ Add Custom Section</button>
+                    <div class="help-tip" style="margin-top: 15px;">
+                        <strong>💡 Tip:</strong> Enable/disable sections or create custom sections with their own card templates. Custom sections can display any type of content you want!<br>
+                        <strong>🔄 Drag & Drop:</strong> Use the ⋮⋮ handle to drag and reorder sections. Changes apply immediately to your website navigation.
+                    </div>
+                </div>
+                <div class="table-container">
+                    <h3>Default Sections</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Section</th>
+                                <th>Name (EN)</th>
+                                <th>Name (KM)</th>
+                                <th>Status</th>
+                                <th>Order</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="defaultSectionsTable"></tbody>
+                    </table>
+                    
+                    <h3 style="margin-top: 30px;">Custom Sections</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name (EN)</th>
+                                <th>Name (KM)</th>
+                                <th>Template</th>
+                                <th>Status</th>
+                                <th>Order</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customSectionsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Language Settings Tab -->
+            <div id="language" class="tab-content">
+                <div class="content-header">
+                    <h2>🌍 Language Settings</h2>
+                    <p>Upload custom flag icons for language switching</p>
+                </div>
+                <div class="settings-form">
+                    <div class="language-flags-section">
+                        <h3>Flag Icons</h3>
+                        <div class="flag-upload-grid">
+                            <!-- English Flag Upload -->
+                            <div class="flag-upload-card">
+                                <div class="flag-header">
+                                    <h4>🇺🇸 English Flag</h4>
+                                    <span class="flag-code">EN</span>
+                                </div>
+                                <div class="flag-preview" id="enFlagPreview">
+                                    <div class="flag-placeholder">
+                                        <span>🇺🇸</span>
+                                        <p>No custom flag uploaded</p>
+                                    </div>
+                                </div>
+                                <div class="flag-upload-controls">
+                                    <input type="file" id="enFlagFile" class="form-control" accept="image/png,image/gif,image/jpg,image/jpeg" onchange="previewFlag(this, 'en')">
+                                    <label for="enFlagFile" class="btn-upload">
+                                        📁 Upload Flag (PNG, GIF, JPG)
+                                    </label>
+                                    <input type="text" id="enFlagUrl" class="form-control" placeholder="Or paste flag image URL" onchange="previewFlagUrl(this, 'en')">
+                                    <button class="btn-remove" onclick="removeFlag('en')" style="display: none;">
+                                        🗑️ Remove Flag
+                                    </button>
+                                </div>
+                                <div class="flag-info">
+                                    <small>Recommended: 32x24px or 64x48px</small>
+                                    <small>Formats: PNG (transparent), GIF (animated), JPG</small>
+                                </div>
+                            </div>
+
+                            <!-- Khmer Flag Upload -->
+                            <div class="flag-upload-card">
+                                <div class="flag-header">
+                                    <h4>🇰🇭 Khmer Flag</h4>
+                                    <span class="flag-code">KH</span>
+                                </div>
+                                <div class="flag-preview" id="khFlagPreview">
+                                    <div class="flag-placeholder">
+                                        <span>🇰🇭</span>
+                                        <p>No custom flag uploaded</p>
+                                    </div>
+                                </div>
+                                <div class="flag-upload-controls">
+                                    <input type="file" id="khFlagFile" class="form-control" accept="image/png,image/gif,image/jpg,image/jpeg" onchange="previewFlag(this, 'kh')">
+                                    <label for="khFlagFile" class="btn-upload">
+                                        📁 Upload Flag (PNG, GIF, JPG)
+                                    </label>
+                                    <input type="text" id="khFlagUrl" class="form-control" placeholder="Or paste flag image URL" onchange="previewFlagUrl(this, 'kh')">
+                                    <button class="btn-remove" onclick="removeFlag('kh')" style="display: none;">
+                                        🗑️ Remove Flag
+                                    </button>
+                                </div>
+                                <div class="flag-info">
+                                    <small>Recommended: 32x24px or 64x48px</small>
+                                    <small>Formats: PNG (transparent), GIF (animated), JPG</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="default-language-section">
+                            <h3>🌐 Default Language Setting</h3>
+                            <div class="default-language-card">
+                                <div class="setting-header">
+                                    <h4>Choose Default Language for New Visitors</h4>
+                                    <p>This will be the language visitors see when they first visit your website</p>
+                                </div>
+                                <div class="language-options">
+                                    <div class="language-option">
+                                        <input type="radio" id="defaultEn" name="defaultLanguage" value="en" checked>
+                                        <label for="defaultEn" class="language-option-label">
+                                            <span class="flag-icon">🇺🇸</span>
+                                            <div class="language-info">
+                                                <strong>English (EN)</strong>
+                                                <small>Good for international audience</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="language-option">
+                                        <input type="radio" id="defaultKh" name="defaultLanguage" value="kh">
+                                        <label for="defaultKh" class="language-option-label">
+                                            <span class="flag-icon">🇰🇭</span>
+                                            <div class="language-info">
+                                                <strong>Khmer (ខ្មែរ)</strong>
+                                                <small>Perfect for Cambodia market</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="marketing-tips">
+                                    <h5>💡 Marketing Tips:</h5>
+                                    <ul>
+                                        <li><strong>Running ads in Cambodia?</strong> Set Khmer as default - visitors will understand immediately</li>
+                                        <li><strong>Targeting international market?</strong> Keep English as default for broader reach</li>
+                                        <li><strong>Local business?</strong> Use Khmer to connect better with local customers</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="language-preview-section">
+                            <h3>Preview</h3>
+                            <div class="preview-container">
+                                <div class="preview-nav">
+                                    <div class="preview-logo">LOGO</div>
+                                    <div class="preview-buttons">
+                                        <button class="preview-lang-toggle" id="previewLangToggle">
+                                            <span id="previewFlagIcon">🇺🇸</span>
+                                            <span id="previewLangText">EN</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="preview-note">This is how your language toggle will look on the website</p>
+                            </div>
+                        </div>
+
+                        <div class="language-actions">
+                            <button class="btn-primary" onclick="saveLanguageFlags()">
+                                💾 Save Flag Settings
+                            </button>
+                            <button class="btn-secondary" onclick="resetToDefaultFlags()">
+                                🔄 Reset to Default Emojis
+                            </button>
+                            <button class="btn-secondary" onclick="testLanguageToggle()">
+                                🧪 Test Language Toggle
+                            </button>
+                        </div>
+
+                        <div class="language-help">
+                            <h4>💡 Tips for Best Results</h4>
+                            <ul>
+                                <li><strong>Size:</strong> Use 32x24px or 64x48px for crisp display</li>
+                                <li><strong>Format:</strong> PNG for transparency, GIF for animation, JPG for photos</li>
+                                <li><strong>Quality:</strong> Use high-quality images that scale well</li>
+                                <li><strong>Consistency:</strong> Keep both flags similar in style and size</li>
+                                <li><strong>Testing:</strong> Test on mobile and desktop devices</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button Customization Tab -->
+            <div id="buttons" class="tab-content">
+                <div class="content-header">
+                    <h2>🔘 Contact Button Customization</h2>
+                    <p>Customize contact button icons with images, GIFs, or emojis</p>
+                </div>
+                <div class="settings-form">
+                    <div class="button-customization-section">
+                        <h3>📱 Contact Channel Buttons</h3>
+                        <p style="margin-bottom: 20px; color: #666;">Upload custom icons for each contact channel. You can use PNG, JPG, GIF, or emoji.</p>
+                        
+                        <div class="button-grid" id="buttonCustomizationGrid">
+                            <!-- Buttons will be generated here -->
+                        </div>
+                        
+                        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                            <h4>💡 Tips for Best Results</h4>
+                            <ul style="margin: 10px 0; padding-left: 20px;">
+                                <li><strong>Icon Size:</strong> Use 32x32px to 64x64px for best quality</li>
+                                <li><strong>Formats:</strong> PNG (transparent), GIF (animated), JPG, or emoji</li>
+                                <li><strong>Quality:</strong> Use high-quality images that scale well</li>
+                                <li><strong>Consistency:</strong> Keep all icons similar in style</li>
+                                <li><strong>Testing:</strong> Test on mobile and desktop devices</li>
+                                <li><strong>GIF Support:</strong> Animated GIFs work great for eye-catching buttons</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 20px; display: flex; gap: 10px;">
+                            <button class="btn-primary" onclick="saveButtonCustomization()">
+                                💾 Save Button Settings
+                            </button>
+                            <button class="btn-secondary" onclick="resetButtonCustomization()">
+                                🔄 Reset to Default Emojis
+                            </button>
+                            <button class="btn-secondary" onclick="previewButtonCustomization()">
+                                👁️ Preview Buttons
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Save Tab -->
+            <div id="datasave" class="tab-content">
+                <div class="content-header">
+                    <h2>💾 Data Save & Export</h2>
+                    <p>Export your data as code to update GitHub files - all visitors will see changes immediately</p>
+                </div>
+                
+                <!-- IMPORTANT WARNING -->
+                <div class="warning-box" style="background: #fff3cd; border: 2px solid #ff6a00; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: #ff6a00; margin-bottom: 10px;">⚠️ IMPORTANT: Prevent Data Loss</h3>
+                    <p style="margin-bottom: 15px; font-size: 16px; line-height: 1.6;">
+                        <strong>Before making changes each day, follow this workflow:</strong>
+                    </p>
+                    <ol style="font-size: 15px; line-height: 1.8; margin-left: 20px;">
+                        <li><strong style="color: #ff6a00;">Go to GitHub FIRST</strong> → Open your config.js file</li>
+                        <li><strong style="color: #ff6a00;">Copy ALL the code</strong> from GitHub (this is your latest data)</li>
+                        <li><strong style="color: #ff6a00;">Come back to Admin Panel</strong> → Click "Import from GitHub" button below</li>
+                        <li><strong style="color: #ff6a00;">Paste the code</strong> → Click "Import"</li>
+                        <li><strong style="color: #28a745;">Now you can safely edit</strong> → Your localStorage has the latest data</li>
+                        <li><strong style="color: #28a745;">After editing</strong> → Export back to GitHub</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: #856404; font-weight: 600;">
+                        ✅ This ensures you NEVER lose any previous data!
+                    </p>
+                </div>
+                
+                <!-- Import Section -->
+                <div class="import-section" style="background: #e7f3ff; border: 2px solid #0066cc; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: #0066cc;">📥 Step 1: Import Current Data from GitHub</h3>
+                    <p style="margin-bottom: 15px;">Before making any changes, import your latest data from GitHub to avoid losing previous work.</p>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button class="btn-primary" onclick="showImportModal()" style="background: #0066cc;">
+                            📥 Import from GitHub
+                        </button>
+                        <button class="btn-secondary" onclick="showImportInstructions()">
+                            📖 How to Import
+                        </button>
+                    </div>
+                    <div id="lastImportInfo" style="font-size: 14px; color: #666; margin-top: 10px;"></div>
+                </div>
+                
+                <div class="settings-form">
+                    <div class="export-overview">
+                        <h3>📊 Current Data Overview</h3>
+                        <div class="data-stats" id="dataStats">
+                            <div class="stat-card">
+                                <div class="stat-icon">📦</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Products</div>
+                                    <div class="stat-value" id="productsCount">0</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📝</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Posts</div>
+                                    <div class="stat-value" id="postsCount">0</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🎁</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Promotions</div>
+                                    <div class="stat-value" id="promotionsCount">0</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📸</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Banners</div>
+                                    <div class="stat-value" id="bannersCount">0</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📅</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Events</div>
+                                    <div class="stat-value" id="eventsCount">0</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🏷️</div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Categories</div>
+                                    <div class="stat-value" id="categoriesCount">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="export-actions">
+                        <h3 style="color: #28a745;">📤 Step 2: Export to GitHub (After Editing)</h3>
+                        <p style="margin-bottom: 15px; color: #666;">After you've made your changes, generate the code and update GitHub.</p>
+                        <div class="action-buttons">
+                            <button class="btn-primary" onclick="generateConfigCode()">
+                                📄 Generate config.js Code
+                            </button>
+                            <button class="btn-primary" onclick="generateFullExport()">
+                                📦 Generate Complete Export
+                            </button>
+                            <button class="btn-secondary" onclick="previewChanges()">
+                                👁️ Preview Changes
+                            </button>
+                            <button class="btn-secondary" onclick="downloadBackup()">
+                                💾 Download Backup
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="code-output-section" id="codeOutputSection" style="display: none;">
+                        <h3>📋 Generated Code</h3>
+                        <div class="code-instructions">
+                            <p><strong>📝 Two Ways to Update GitHub:</strong></p>
+                            
+                            <div style="background: #e7f9e7; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <h4 style="color: #28a745; margin-bottom: 10px;">✅ EASY WAY (Recommended):</h4>
+                                <ol>
+                                    <li>💾 Click "Download config.js" button below</li>
+                                    <li>🌐 Go to your GitHub repository</li>
+                                    <li>🗑️ Delete the old config.js file</li>
+                                    <li>📤 Upload the new config.js file you just downloaded</li>
+                                    <li>💬 Add commit message: "Update website data"</li>
+                                    <li>✔️ Click "Commit changes"</li>
+                                    <li>⏱️ Wait 1-2 minutes for changes to go live</li>
+                                </ol>
+                            </div>
+                            
+                            <div style="background: #f0f0f0; padding: 15px; border-radius: 8px;">
+                                <h4 style="color: #666; margin-bottom: 10px;">📋 Copy/Paste Way:</h4>
+                                <ol>
+                                    <li>📋 Click "Copy Code" button</li>
+                                    <li>🌐 Go to GitHub → Open config.js</li>
+                                    <li>✏️ Click "Edit" (pencil icon)</li>
+                                    <li>🗑️ Select ALL old code (Ctrl+A) and DELETE</li>
+                                    <li>📋 Paste the copied code (Ctrl+V)</li>
+                                    <li>✔️ Commit changes</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span class="code-title">config.js</span>
+                                <button class="btn-copy" onclick="copyCodeToClipboard()">
+                                    📋 Copy Code
+                                </button>
+                                <button class="btn-copy" onclick="downloadConfigFile()" style="background: #28a745; margin-left: 10px;">
+                                    💾 Download config.js
+                                </button>
+                            </div>
+                            <textarea id="generatedCode" class="code-textarea" readonly></textarea>
+                        </div>
+                    </div>
+
+                    <div class="github-integration">
+                        <h3>🔗 GitHub Integration Guide</h3>
+                        <div class="integration-steps">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Generate Code</h4>
+                                    <p>Click "Generate config.js Code" to create the updated configuration</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Copy Code</h4>
+                                    <p>Use the "Copy Code" button to copy the generated code to clipboard</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Update GitHub</h4>
+                                    <p>Paste the code into your GitHub config.js file and commit changes</p>
+                                </div>
+                            </div>
+                            <div class="step-card">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h4>Live Updates</h4>
+                                    <p>All visitors will see your changes immediately after GitHub update</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="data-help">
+                        <h4>💡 Data Save Benefits</h4>
+                        <ul>
+                            <li><strong>No Storage Limits:</strong> Unlimited data on localhost for editing</li>
+                            <li><strong>GitHub Deployment:</strong> Export code to update live website</li>
+                            <li><strong>Version Control:</strong> All changes tracked in GitHub history</li>
+                            <li><strong>Instant Updates:</strong> Visitors see changes immediately</li>
+                            <li><strong>Complete Export:</strong> All settings and data included</li>
+                            <li><strong>Easy Backup:</strong> Download complete configuration files</li>
+                        </ul>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: #e8f5e8; border-radius: 8px; border-left: 4px solid #28a745;">
+                            <h5 style="color: #155724; margin: 0 0 10px 0;">🚀 Localhost Editing</h5>
+                            <p style="color: #155724; margin: 0; font-size: 14px;">
+                                You're editing on localhost with unlimited capacity! Upload any size files, add unlimited content. 
+                                When ready, export to GitHub for live deployment.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content">
+                <div class="settings-form">
+                    <h3>Logo Settings</h3>
+                    <div class="form-group">
+                        <label>Upload Logo (PNG, JPG, or GIF)</label>
+                        <input type="file" id="logoFile" class="form-control" accept="image/*" onchange="previewLogo(this)">
+                        <small class="help-text">Recommended size: 200x50px or similar ratio. GIF format supported for animated logos.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Or Logo URL</label>
+                        <input type="text" id="logoUrl" class="form-control" placeholder="https://example.com/logo.png">
+                    </div>
+                    <div id="logoPreview" class="image-preview"></div>
+                    <input type="hidden" id="logoImage" value="">
+                    
+                    <hr style="margin: 30px 0;">
+                    
+                    <h3>Site Settings (Title, Favicon & Social Sharing)</h3>
+                    <div class="help-tip" style="margin-bottom: 20px;">
+                        <strong>💡 Tip:</strong> These settings control your website's title, favicon (browser tab icon), and how your site appears when shared on social media (Facebook, Telegram, WhatsApp, etc.) - just like Alibaba!
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Site Title (English)</label>
+                            <input type="text" id="siteTitle" class="form-control" placeholder="AD Milk Company">
+                            <small class="help-text">Appears in browser tab and search results</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Site Title (Khmer)</label>
+                            <input type="text" id="siteTitleKm" class="form-control" placeholder="ក្រុមហ៊ុនទឹកដោះគោ AD">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Favicon (Browser Tab Icon)</label>
+                        <input type="file" id="faviconFile" class="form-control" accept="image/*" onchange="previewFavicon(this)">
+                        <small class="help-text">Upload PNG, JPG, or GIF. Recommended: 32x32px or 64x64px square image</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Or Favicon URL</label>
+                        <input type="text" id="faviconUrl" class="form-control" placeholder="https://example.com/favicon.png">
+                    </div>
+                    <div id="faviconPreview" class="image-preview"></div>
+                    <input type="hidden" id="faviconImage" value="">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Site Description (English)</label>
+                            <textarea id="siteDescription" class="form-control" rows="3" placeholder="Welcome to our online store. We offer quality products..."></textarea>
+                            <small class="help-text">Appears in search results and social media shares</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Site Description (Khmer)</label>
+                            <textarea id="siteDescriptionKm" class="form-control" rows="3" placeholder="សូមស្វាគមន៍មកកាន់ហាងអនឡាញរបស់យើង..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Social Share Image (Open Graph)</label>
+                        <input type="file" id="ogImageFile" class="form-control" accept="image/*" onchange="previewOgImage(this)">
+                        <small class="help-text">Image shown when sharing on Facebook, Telegram, WhatsApp. Recommended: 1200x630px</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Or Share Image URL</label>
+                        <input type="text" id="ogImageUrl" class="form-control" placeholder="https://example.com/share-image.jpg">
+                    </div>
+                    <div id="ogImagePreview" class="image-preview"></div>
+                    <input type="hidden" id="ogImageData" value="">
+                    
+                    <div class="form-group">
+                        <label>Keywords (for SEO)</label>
+                        <input type="text" id="siteKeywords" class="form-control" placeholder="online store, products, shopping, AD Milk">
+                        <small class="help-text">Comma-separated keywords for search engines</small>
+                    </div>
+                    
+                    <h3 style="margin-top: 30px;">Navigation Style</h3>
+                    <div class="form-group">
+                        <label>Select Navigation Style</label>
+                        <select id="navStyle" class="form-control" onchange="toggleCustomNavColors()">
+                            <option value="solid">Solid (Default Black)</option>
+                            <option value="glass">Glass (Modern Transparent)</option>
+                            <option value="gradient">Gradient (Colorful)</option>
+                            <option value="custom">Custom Colors</option>
+                        </select>
+                    </div>
+                    
+                    <div id="customNavColors" style="display:none; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                        <h4>Custom Navigation Colors</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Background Color</label>
+                                <input type="color" id="navBgColor" class="form-control" value="#2c3e50">
+                            </div>
+                            <div class="form-group">
+                                <label>Text Color</label>
+                                <input type="color" id="navTextColor" class="form-control" value="#ffffff">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Active Button Color</label>
+                            <input type="color" id="navActiveColor" class="form-control" value="#e74c3c">
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 30px;">Post Banner</h3>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="problemBannerEnabled"> Enable Banner
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Banner Image URL</label>
+                        <input type="text" id="problemBannerImage" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Banner Link URL</label>
+                        <input type="text" id="problemBannerLink" class="form-control">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Title (English)</label>
+                            <input type="text" id="problemBannerTitleEn" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Title (Khmer)</label>
+                            <input type="text" id="problemBannerTitleKm" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Description (English)</label>
+                            <input type="text" id="problemBannerDescEn" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Description (Khmer)</label>
+                            <input type="text" id="problemBannerDescKm" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <hr style="margin: 30px 0;">
+                    
+                    <h3>Language Management</h3>
+                    <div class="form-group">
+                        <label>Upload Language File (JSON)</label>
+                        <input type="file" id="languageFile" class="form-control" accept=".json" onchange="previewLanguageFile(this)">
+                        <small class="help-text">Upload a JSON file containing language translations. Format: {"key": {"en": "English", "km": "Khmer"}}</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Language File</label>
+                        <div id="languagePreview" class="form-control" style="min-height: 100px; background: #f8f9fa; overflow-y: auto;">
+                            <em>No language file uploaded</em>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn-primary" onclick="downloadLanguageTemplate()" style="margin-right: 10px;">📥 Download Template</button>
+                        <button class="btn-primary" onclick="saveLanguageFile()">💾 Save Language File</button>
+                        <button class="btn-primary" onclick="resetLanguageFile()" style="background: #dc3545;">🗑️ Reset to Default</button>
+                    </div>
+                    
+                    <hr style="margin: 30px 0;">
+                    
+                    <h3>About Us Section</h3>
+                    <div class="form-group">
+                        <label>About Us Title (English)</label>
+                        <input type="text" id="aboutTitleEn" class="form-control" placeholder="About Us">
+                    </div>
+                    <div class="form-group">
+                        <label>About Us Title (Khmer)</label>
+                        <input type="text" id="aboutTitleKm" class="form-control" placeholder="អំពីយើង">
+                    </div>
+                    <div class="form-group">
+                        <label>About Us Content (English)</label>
+                        <textarea id="aboutContentEn" class="form-control" rows="5" placeholder="Welcome to our store! Tell your story here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>About Us Content (Khmer)</label>
+                        <textarea id="aboutContentKm" class="form-control" rows="5" placeholder="សូមស្វាគមន៍មកកាន់ហាងរបស់យើង! ប្រាប់រឿងរបស់អ្នកនៅទីនេះ..."></textarea>
+                    </div>
+                    
+                    <hr style="margin: 30px 0;">
+                    
+                    <h3>Contact Information</h3>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" id="settingPhone" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="settingEmail" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="settingAddress" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="settingPhone" class="form-control" placeholder="+1234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp</label>
+                        <input type="text" id="settingWhatsapp" class="form-control" placeholder="+1234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Telegram</label>
+                        <input type="text" id="settingTelegram" class="form-control" placeholder="https://t.me/username">
+                    </div>
+                    <div class="form-group">
+                        <label>Facebook</label>
+                        <input type="text" id="settingFacebook" class="form-control" placeholder="https://facebook.com/username">
+                    </div>
+                    <div class="form-group">
+                        <label>Messenger</label>
+                        <input type="text" id="settingMessenger" class="form-control" placeholder="https://m.me/username">
+                    </div>
+                    <div class="form-group">
+                        <label>Post Section Link</label>
+                        <input type="text" id="settingProblemLink" class="form-control">
+                    </div>
+                    <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Add/Edit -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Add Item</h2>
+            <div id="modalForm"></div>
+        </div>
+    </div>
+    
+    <!-- Import Modal -->
+    <div id="importModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close" onclick="closeImportModal()">&times;</span>
+            <h2>📥 Import Data from GitHub</h2>
+            <div style="margin: 20px 0;">
+                <!-- Import Method Tabs -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ddd;">
+                    <button id="pasteMethodTab" class="import-method-tab active" onclick="switchImportMethod('paste')" style="flex: 1; padding: 12px; border: none; background: #007bff; color: white; cursor: pointer; border-radius: 5px 5px 0 0; font-weight: 600;">
+                        📋 Paste Code
+                    </button>
+                    <button id="uploadMethodTab" class="import-method-tab" onclick="switchImportMethod('upload')" style="flex: 1; padding: 12px; border: none; background: #e9ecef; color: #333; cursor: pointer; border-radius: 5px 5px 0 0; font-weight: 600;">
+                        📁 Upload File
+                    </button>
+                </div>
+
+                <!-- Paste Method -->
+                <div id="pasteMethod" class="import-method" style="display: block;">
+                    <p style="margin-bottom: 15px; line-height: 1.6;">
+                        <strong>Instructions:</strong>
+                    </p>
+                    <ol style="line-height: 1.8; margin-left: 20px; margin-bottom: 20px;">
+                        <li>Go to your GitHub repository</li>
+                        <li>Open the <code>config.js</code> file</li>
+                        <li>Click "Raw" button (top right)</li>
+                        <li>Select ALL the code (Ctrl+A or Cmd+A)</li>
+                        <li>Copy it (Ctrl+C or Cmd+C)</li>
+                        <li>Paste it in the box below</li>
+                        <li>Click "Import Data" button</li>
+                    </ol>
+                    <textarea id="importCodeInput" 
+                              placeholder="Paste your GitHub config.js code here..."
+                              style="width: 100%; height: 300px; font-family: monospace; font-size: 12px; padding: 15px; border: 2px solid #ddd; border-radius: 5px; resize: vertical;"></textarea>
+                </div>
+
+                <!-- Upload Method -->
+                <div id="uploadMethod" class="import-method" style="display: none;">
+                    <p style="margin-bottom: 15px; line-height: 1.6;">
+                        <strong>Instructions:</strong>
+                    </p>
+                    <ol style="line-height: 1.8; margin-left: 20px; margin-bottom: 20px;">
+                        <li>Go to your GitHub repository</li>
+                        <li>Open the <code>config.js</code> file</li>
+                        <li>Click the "Download" button (or right-click "Raw" → Save as)</li>
+                        <li>Save the file to your computer</li>
+                        <li>Click "Choose File" below and select the downloaded config.js</li>
+                        <li>Click "Import Data" button</li>
+                    </ol>
+                    <div style="background: #f8f9fa; border: 2px dashed #007bff; border-radius: 10px; padding: 40px; text-align: center; margin-bottom: 20px;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
+                        <input type="file" id="importFileInput" accept=".js,application/javascript,text/javascript" onchange="handleFileUpload(this)" style="display: none;">
+                        <label for="importFileInput" style="display: inline-block; background: #007bff; color: white; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+                            Choose config.js File
+                        </label>
+                        <p id="fileNameDisplay" style="margin-top: 15px; color: #666; font-size: 14px;">No file selected</p>
+                    </div>
+                    <div id="filePreview" style="display: none; background: #e7f3ff; border: 2px solid #0066cc; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <h4 style="color: #0066cc; margin: 0 0 10px 0;">✅ File Loaded Successfully</h4>
+                        <p style="margin: 0; color: #666;"><strong>File:</strong> <span id="loadedFileName"></span></p>
+                        <p style="margin: 5px 0 0 0; color: #666;"><strong>Size:</strong> <span id="loadedFileSize"></span></p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button class="btn-primary" onclick="importGitHubData()" style="background: #28a745;">
+                        ✅ Import Data
+                    </button>
+                    <button class="btn-secondary" onclick="closeImportModal()">
+                        ❌ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="storage-manager.js"></script>
+    <script src="config.js"></script>
+    <script src="admin-script.js"></script>
+</body>
+</html>
